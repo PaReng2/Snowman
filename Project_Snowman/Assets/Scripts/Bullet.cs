@@ -12,7 +12,7 @@ public class Bullet : MonoBehaviour
     private void Start()
     {
         playerController = FindObjectOfType<PlayerController>();
-        lifeTime = playerController.attackRange;
+        lifeTime = 1f;
     }
     private void Update()
     {
@@ -25,6 +25,10 @@ public class Bullet : MonoBehaviour
             Destroy(gameObject);
         }
         if (collision.gameObject.tag == "Ground")
+        {
+            Destroy(gameObject);
+        }
+        if (collision.gameObject.tag == "enemy")
         {
             Destroy(gameObject);
         }

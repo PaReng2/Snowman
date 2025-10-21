@@ -12,7 +12,6 @@ public class PlayerController : MonoBehaviour
     Animator animator;
     float curLeftAttackTime;
     float AttackRate;
-    public float attackRange = 0.1f;
     public StatSO playerStatus;
     public Slider hpSlider;
     private int currentHp;
@@ -46,6 +45,7 @@ public class PlayerController : MonoBehaviour
         Move();
         Jump();
         Turn();
+        
 
         // curLeftAttackTime이 0보다 클 때만 감소시켜서 음수가 되는 것을 방지합니다.
         if (curLeftAttackTime > 0)
@@ -95,7 +95,7 @@ public class PlayerController : MonoBehaviour
     {
         GameObject intantBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
         Rigidbody bulletRigid = intantBullet.GetComponent<Rigidbody>();
-        bulletRigid.velocity = firePoint.forward * 10;
+        bulletRigid.velocity = firePoint.forward * 30;
     }
 
     void Turn()
