@@ -14,7 +14,10 @@ public class Bullet : MonoBehaviour
         playerController = FindObjectOfType<PlayerController>();
         lifeTime = playerController.attackRange;
     }
-
+    private void Update()
+    {
+        Destroy(gameObject, lifeTime);
+    }
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Wall")
@@ -31,4 +34,5 @@ public class Bullet : MonoBehaviour
         }
 
     }
+    
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 3f;
@@ -11,27 +12,32 @@ public class PlayerController : MonoBehaviour
     Animator animator;
     float curLeftAttackTime;
     float AttackRate;
-    public float attackRange;
-    
+    public float attackRange = 0.1f;
+    public StatSO playerStatus;
+    public Slider hpSlider;
+    private int currentHp;
+
+
+    public Camera followCamera;
+
     Vector3 moveVec;
 
     // 민감도
     public float rotationSpeed = 300f;
 
-    // 마우스 입력 값
-    private Vector2 lookInput;
-    // Y 축 회전 각도 (수직 회전 제한을 위해 필요)
-    private float cameraVerticalAngle = 0f;
+   
 
     Rigidbody rb;
 
     // Start is called before the first frame update
     void Start()
     {
+        hpSlider.maxValue = playerStatus.hp;
+        currentHp = playerStatus.hp;
+        hpSlider.value = playerStatus.hp;
         animator = GetComponentInChildren<Animator>();  
         rb = GetComponent<Rigidbody>();
         AttackRate = 2.3f;
-        attackRange = 2f;
     }
 
     // Update is called once per frame
@@ -39,7 +45,7 @@ public class PlayerController : MonoBehaviour
     {
         Move();
         Jump();
-        
+        Turn();
 
         // curLeftAttackTime이 0보다 클 때만 감소시켜서 음수가 되는 것을 방지합니다.
         if (curLeftAttackTime > 0)
@@ -89,7 +95,22 @@ public class PlayerController : MonoBehaviour
     {
         GameObject intantBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
         Rigidbody bulletRigid = intantBullet.GetComponent<Rigidbody>();
-        bulletRigid.velocity = firePoint.forward * 50;
+        bulletRigid.velocity = firePoint.forward * 10;
+    }
+
+    void Turn()
+    {
+        //transform.LookAt(transform.position + moveVec);
+
+
+        Ray ray = followCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit rayHit;
+        if (Physics.Raycast(ray, out rayHit, 100))
+        {
+            Vector3 nextVec = rayHit.point - transform.position;
+            nextVec.y = transform.position.y;
+            transform.LookAt(transform.position + nextVec);
+        }
     }
     
 }
