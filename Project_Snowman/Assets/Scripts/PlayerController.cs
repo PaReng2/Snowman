@@ -100,17 +100,27 @@ public class PlayerController : MonoBehaviour
 
     void Turn()
     {
-        //transform.LookAt(transform.position + moveVec);
-
-
+        // ray 변수를 선언한 곳과 followCamera의 선언/할당에 문제가 없다고 가정합니다.
         Ray ray = followCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit rayHit;
+
         if (Physics.Raycast(ray, out rayHit, 100))
         {
-            Vector3 nextVec = rayHit.point - transform.position;
-            nextVec.y = transform.position.y;
-            transform.LookAt(transform.position + nextVec);
+            // 1. 목표 지점까지의 방향 벡터를 계산합니다. (nextVec 대신 targetDirection을 사용했습니다.)
+            Vector3 targetDirection = rayHit.point - transform.position;
+
+            // 2. 캐릭터의 높이 변화(y축)를 무시하기 위해 방향 벡터의 y 성분을 0으로 만듭니다.
+            targetDirection.y = 0;
+
+            // 3. 방향 벡터가 유효한지 확인합니다. (Vector3.zero일 경우 LookRotation 에러 방지)
+            if (targetDirection != Vector3.zero)
+            {
+                // 4. LookRotation으로 목표 방향으로의 회전을 계산합니다.
+                Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+
+                transform.rotation = targetRotation;
+            }
         }
     }
-    
+
 }
