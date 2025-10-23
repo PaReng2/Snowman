@@ -6,7 +6,9 @@ public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 3f;
     public Transform firePoint;
-    public GameObject bulletPrefab;
+    public GameObject snowBallPrefab;
+    //public GameObject iceBallPrefab;
+
     float moveX;
     float moveZ;
     Animator animator;
@@ -16,6 +18,7 @@ public class PlayerController : MonoBehaviour
     public Slider hpSlider;
     private int currentHp;
 
+    private bool isGrounded;
 
     public Camera followCamera;
 
@@ -23,10 +26,17 @@ public class PlayerController : MonoBehaviour
 
     // 민감도
     public float rotationSpeed = 300f;
-
-   
-
     Rigidbody rb;
+
+
+
+    private enum Weapon
+    {
+        snowBall,
+        iceBall
+    }
+
+    private Weapon currentWeaopn;
 
     // Start is called before the first frame update
     void Start()
@@ -37,6 +47,7 @@ public class PlayerController : MonoBehaviour
         animator = GetComponentInChildren<Animator>();  
         rb = GetComponent<Rigidbody>();
         AttackRate = 2.3f;
+        currentWeaopn = Weapon.snowBall;
     }
 
     // Update is called once per frame
@@ -45,7 +56,8 @@ public class PlayerController : MonoBehaviour
         Move();
         Jump();
         Turn();
-        
+        SelectWeapon();
+        Dash();
 
         // curLeftAttackTime이 0보다 클 때만 감소시켜서 음수가 되는 것을 방지합니다.
         if (curLeftAttackTime > 0)
@@ -72,6 +84,19 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    void SelectWeapon()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            currentWeaopn = Weapon.snowBall;
+        }
+        
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            currentWeaopn = Weapon.iceBall;
+        }
+    }
+
     void Move()
     {
         moveX = Input.GetAxis("Horizontal");
@@ -84,18 +109,53 @@ public class PlayerController : MonoBehaviour
         
     }
 
+    void Dash()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            rb.AddForce(moveVec * 5, ForceMode.Impulse);
+        }
+    }
+
     void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             rb.AddForce(Vector3.up * 5, ForceMode.Impulse);
         }
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Ground")
+        {
+            isGrounded = true;
+        }
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.tag == "Ground")
+        {
+            isGrounded = false;
+        }
+    }
+
     void Attack()
     {
-        GameObject intantBullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        Rigidbody bulletRigid = intantBullet.GetComponent<Rigidbody>();
-        bulletRigid.velocity = firePoint.forward * 30;
+        if (currentWeaopn == Weapon.snowBall)
+        {
+            GameObject intantBullet = Instantiate(snowBallPrefab, firePoint.position, firePoint.rotation);
+            Rigidbody bulletRigid = intantBullet.GetComponent<Rigidbody>();
+            bulletRigid.velocity = firePoint.forward * 30;
+        }
+
+        //if (currentWeaopn == Weapon.iceBall)  //추후에 추가할 예정
+        //{
+        //    GameObject intantBullet = Instantiate(iceBallPrefab, firePoint.position, firePoint.rotation);
+        //    Rigidbody bulletRigid = intantBullet.GetComponent<Rigidbody>();
+        //    bulletRigid.velocity = firePoint.forward * 30;
+        //}
+        
     }
 
     void Turn()

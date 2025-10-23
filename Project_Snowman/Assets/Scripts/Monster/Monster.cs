@@ -32,8 +32,7 @@ public class Monster : MonoBehaviour
 
         
 
-        // 스폰 시 StageManager에 등록
-        StageManager.Instance.OnEnemySpawned();
+        
     }
 
     private void OnCollisionEnter(Collision collision)

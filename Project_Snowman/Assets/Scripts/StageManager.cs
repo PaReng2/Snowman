@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,9 +8,9 @@ public class StageManager : MonoBehaviour
     public static StageManager Instance;
 
     public GameObject portalPrefab;   // 포탈 프리팹
-    private int totalEnemyCount = 0;  // 총 스폰될 적 수
     private int killedEnemyCount = 0; // 처치된 적 수
     private bool portalSpawned = false;
+    private Spawner spawner;
 
     public int TotalEnemyCount;
 
@@ -24,25 +25,27 @@ public class StageManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        spawner = FindObjectOfType<Spawner>();
     }
 
+    private void Start()
+    {
+        TotalEnemyCount = spawner.maxSpawnCount;
+
+    }
     public void SetTotalEnemyCount(int count)
     {
-        totalEnemyCount = count;
+        TotalEnemyCount = count;
         killedEnemyCount = 0;
         portalSpawned = false;
     }
 
-    public void OnEnemySpawned()
-    {
-
-    }
 
     public void OnEnemyKilled()
     {
         killedEnemyCount++;
 
-        if (!portalSpawned && killedEnemyCount >= totalEnemyCount)
+        if (!portalSpawned && killedEnemyCount >= TotalEnemyCount)
         {
             OpenPortal();
         }
