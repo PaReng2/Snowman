@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 3f;
     public Transform firePoint;
     public GameObject snowBallPrefab;
-    //public GameObject iceBallPrefab;
+    public GameObject iceBallPrefab;
 
     float moveX;
     float moveZ;
@@ -17,10 +17,10 @@ public class PlayerController : MonoBehaviour
     public StatSO playerStatus;
     public Slider hpSlider;
     private int currentHp;
-
     private bool isGrounded;
 
     public Camera followCamera;
+    public ParticleSystem dashEffect;
 
     Vector3 moveVec;
 
@@ -30,14 +30,15 @@ public class PlayerController : MonoBehaviour
 
 
 
-    private enum Weapon
+    public enum Weapon
     {
         snowBall,
         iceBall
     }
 
-    private Weapon currentWeaopn;
+    public Weapon currentWeaopn;
 
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -56,7 +57,7 @@ public class PlayerController : MonoBehaviour
         Move();
         Jump();
         Turn();
-        SelectWeapon();
+        
         Dash();
 
         // curLeftAttackTime이 0보다 클 때만 감소시켜서 음수가 되는 것을 방지합니다.
@@ -84,18 +85,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    void SelectWeapon()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            currentWeaopn = Weapon.snowBall;
-        }
-        
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            currentWeaopn = Weapon.iceBall;
-        }
-    }
+    
 
     void Move()
     {
@@ -114,6 +104,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             rb.AddForce(moveVec * 5, ForceMode.Impulse);
+
+            dashEffect.Play();
+        }
+        else
+        {
+            dashEffect.Stop();
         }
     }
 
@@ -147,15 +143,19 @@ public class PlayerController : MonoBehaviour
             GameObject intantBullet = Instantiate(snowBallPrefab, firePoint.position, firePoint.rotation);
             Rigidbody bulletRigid = intantBullet.GetComponent<Rigidbody>();
             bulletRigid.velocity = firePoint.forward * 30;
+
+            AttackRate = 2.3f;
         }
 
-        //if (currentWeaopn == Weapon.iceBall)  //추후에 추가할 예정
-        //{
-        //    GameObject intantBullet = Instantiate(iceBallPrefab, firePoint.position, firePoint.rotation);
-        //    Rigidbody bulletRigid = intantBullet.GetComponent<Rigidbody>();
-        //    bulletRigid.velocity = firePoint.forward * 30;
-        //}
-        
+        if (currentWeaopn == Weapon.iceBall)  //추후에 추가할 예정
+        {
+            GameObject intantBullet = Instantiate(iceBallPrefab, firePoint.position, firePoint.rotation);
+            Rigidbody bulletRigid = intantBullet.GetComponent<Rigidbody>();
+            bulletRigid.velocity = firePoint.forward * 13;
+
+            AttackRate = 1.3f;
+        }
+
     }
 
     void Turn()
