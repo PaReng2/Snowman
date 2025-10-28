@@ -35,7 +35,7 @@ public class Spawner : MonoBehaviour
         float distance = Vector3.Distance(player.position, transform.position);
 
 
-        if (currentSpawnCount >= maxSpawnCount) return; // 5∏∂∏Æ ≥—¿∏∏È ∏ÿ√„
+        if (currentSpawnCount == maxSpawnCount) return; // 5∏∂∏Æ ≥—¿∏∏È ∏ÿ√„
 
 
         timer += Time.deltaTime;
