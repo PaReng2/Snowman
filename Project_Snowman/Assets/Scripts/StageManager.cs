@@ -30,7 +30,7 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
-        TotalEnemyCount = spawner.maxSpawnCount;
+        TotalEnemyCount = spawner.maxSpawnCount * 2;
 
     }
     public void SetTotalEnemyCount(int count)
