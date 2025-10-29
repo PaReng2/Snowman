@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
@@ -16,6 +17,12 @@ public class PlayerController : MonoBehaviour
     float AttackRate;
     public StatSO playerStatus;
     public Slider hpSlider;
+    public Text hpText;
+    public Text curWeapon;
+
+    public int maxHp;
+    public int damage;
+
     private int currentHp;
     private bool isGrounded;
 
@@ -23,6 +30,8 @@ public class PlayerController : MonoBehaviour
     public ParticleSystem dashEffect;
 
     Vector3 moveVec;
+
+    private bool isDead;
 
     // ¹Î°¨µµ
     public float rotationSpeed = 300f;
@@ -49,11 +58,16 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         AttackRate = 2.3f;
         currentWeaopn = Weapon.snowBall;
+        isDead = false;
+        damage = playerStatus.damage;
+        maxHp = playerStatus.hp;
     }
 
     // Update is called once per frame
     void Update()
     {
+        hpText.text = $"{currentHp} / {maxHp}";
+        curWeapon.text = $"{currentWeaopn}";
         Move();
         Jump();
         Turn();
@@ -153,7 +167,7 @@ public class PlayerController : MonoBehaviour
             Rigidbody bulletRigid = intantBullet.GetComponent<Rigidbody>();
             bulletRigid.velocity = firePoint.forward * 13;
 
-            AttackRate = 1.3f;
+            AttackRate = 0.7f;
         }
 
     }
@@ -183,4 +197,23 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    
+
+    public void TakeDamage(int damage)
+    {
+        if (isDead) return;
+
+        currentHp -= damage;
+        hpSlider.value = currentHp;
+
+        if (currentHp <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        SceneManager.LoadScene(0);
+    }
 }
